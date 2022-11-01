@@ -18,3 +18,24 @@ function insertName() {
     });
 }
 insertName(); //run the function
+
+function readQuote() {
+    db.collection("quotes").doc("Tuesday")                                                      //name of the collection and documents should matach excatly with what you have in Firestore
+      .onSnapshot(tuesdayDoc => {                                                               //arrow notation
+           console.log("current document data: " + tuesdayDoc.data());                          //.data() returns data object
+           document.getElementById("quote-goes-here").innerHTML = tuesdayDoc.data().quotes;      //using javascript to display the data on the right place
+           
+           //Here are other ways to access key:value data fields
+           //$('#quote-goes-here').text(tuesdayDoc.data().quote);                                       //using jquery object dot notation
+           //$("#quote-goes-here").text(tuesdayDoc.data()["quote"]);                                    //using json object indexing
+      })
+}
+readQuote()        //calling the function
+
+//Format example format #1  (arrow notation)
+db.collection("quotes").doc("Tuesday")
+  .get()
+  .then(
+   snap => {                       //input arg "snap" is snapshot return from get()
+     console.log(snap.data());     //print key value pairs
+   });
