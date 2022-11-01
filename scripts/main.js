@@ -39,3 +39,70 @@ db.collection("quotes").doc("Tuesday")
    snap => {                       //input arg "snap" is snapshot return from get()
      console.log(snap.data());     //print key value pairs
    });
+
+function writeHikes() {
+//define a variable for the collection you want to create in Firestore to populate data
+    var hikesRef = db.collection("hikes");
+
+    hikesRef.add({
+                      code:"BBY01",
+        name: "Squamish Chief",    //replace with your own city?
+        city: "Squamish",
+        province: "BC",
+        level: "moderate",
+        length: "10",
+        details: "Get a view of the entire town!",
+        last_updated: firebase.firestore.FieldValue.serverTimestamp()  
+    });
+    hikesRef.add({
+                      code:"AM01",
+        name: "Four Lakes Trail",    //replace with your own city?
+        city: "Squamish",
+        province: "BC",
+        level: "easy",
+        length: "10.5",
+        details: "Nice lakes to look at during the hike. You can swim in Alice Lake after the hike!",
+        last_updated: firebase.firestore.FieldValue.serverTimestamp()
+   });
+   hikesRef.add({
+                      code:"NV01",
+        name: "Sea to Sky Gondola",    //replace with your own city?
+        city: "Squamish",
+        province: "BC",
+        level: "hard",
+        length: "8.2",
+        details: "Long hike with rewarding views.",
+        last_updated: firebase.firestore.Timestamp.fromDate(new Date("March 10, 2022"))
+   });
+}
+
+function displayCards(collection) {
+    let cardTemplate = document.getElementById("hikeCardTemplate");
+
+    db.collection(collection).get()
+        .then(snap => {
+            //var i = 1;  //if you want to use commented out section
+            snap.forEach(doc => { //iterate thru each doc
+                var title = doc.data().name;        // get value of the "name" key
+                var details = doc.data().details;   // get value of the "details" key
+								var hikeID = doc.data().code;    //get unique ID to each hike to be used for fetching right image
+                let newcard = cardTemplate.content.cloneNode(true);
+
+                //update title and text and image
+                newcard.querySelector('.card-title').innerHTML = title;
+                newcard.querySelector('.card-text').innerHTML = details;
+                newcard.querySelector('.card-image').src = `./images/${hikeID}.jpg`; //Example: NV01.jpg
+
+                //give unique ids to all elements for future use
+                // newcard.querySelector('.card-title').setAttribute("id", "ctitle" + i);
+                // newcard.querySelector('.card-text').setAttribute("id", "ctext" + i);
+                // newcard.querySelector('.card-image').setAttribute("id", "cimage" + i);
+
+                //attach to gallery
+                document.getElementById(collection + "-go-here").appendChild(newcard);
+                //i++;   //if you want to use commented out section
+            })
+        })
+}
+
+displayCards("hikes");
